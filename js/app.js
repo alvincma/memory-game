@@ -11,6 +11,7 @@ let cards = ['diamond', 'paper-plane-o', 'anchor', 'bolt',
 // Initialize a list of "opened" cards to empty list;
 let openCards = [];
 let moves = 0;
+let matches = 0;
 
 /*
  * Display the cards on the page
@@ -51,6 +52,7 @@ function startNewGame() {
     // Reset game stats
     openCards = [];
     moves = 0;
+    matches = 0;
     document.querySelector('.moves').textContent = moves;
     const starList = document.querySelectorAll('.stars li i');
     for (let i = 0; i < starList.length; i++) {
@@ -71,9 +73,9 @@ function startNewGame() {
         icon.classList.add('fa-' + gameCard);
         const card = document.createElement('li');
         card.classList.add('card');
-        // card.classList.add('open');
-        // card.classList.add('show');
+        card.setAttribute('data-card-type', gameCard);
         card.appendChild(icon);
+        card.addEventListener('click', openCard);
         fragment.appendChild(card);
     }
     deck.appendChild(fragment);
@@ -89,3 +91,80 @@ function startNewGame() {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+function openCard(event) {
+    // Check if the card is already opened or matched
+    let card = null;
+    if (event.target.nodeName === 'LI') {
+        card = event.target;
+    } else {
+        card = event.target.parentNode;
+    }
+    if (card.classList.contains('match') || card.classList.contains('open')) {
+        return;
+    }
+    showCard(card);
+    addToOpenCards(card);
+    checkMatchCards();
+    checkWin();
+}
+
+function showCard(card) {
+    card.classList.add('open', 'show');
+}
+
+function addToOpenCards(card) {
+    // Sanity check, the open cards should be less than
+    if (openCards.length > 2) {
+        return;
+    }
+    openCards.push(card);
+}
+
+function checkMatchCards() {
+    if (openCards.length !== 2) {
+        // First card added to open cards, no need to check
+        return;
+    }
+
+    // Increase move counts
+    document.querySelector('.moves').textContent = ++moves;
+
+    // Check if opened cards match
+    if (openCards[0].getAttribute('data-card-type') === openCards[1].getAttribute('data-card-type')) {
+        lockCards();
+    } else {
+        removeAndHideCards()
+    }
+}
+
+function lockCards() {
+    // Change the style of card to match
+    for (let i = 0; i < openCards.length; i++) {
+        // Remove previous style
+        openCards[i].classList.remove('open', 'show');
+        openCards[i].classList.add('match');
+    }
+    openCards.pop();
+    openCards.pop();
+    matches++;
+}
+
+function removeAndHideCards() {
+    // Change the style of card to match
+    for (let i = 0; i < openCards.length; i++) {
+        // Remove previous style
+        openCards[i].classList.remove('open', 'show');
+    }
+    openCards.pop();
+    openCards.pop();
+}
+
+function checkWin() {
+    if (matches === 8) {
+        setTimeout(displayCongrat, 500);
+    }
+}
+
+function displayCongrat() {
+    alert('Congratulations! You\'ve won the game!');
+}
