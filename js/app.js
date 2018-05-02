@@ -148,20 +148,34 @@ function lockCards() {
         // Remove previous style
         openCards[i].classList.remove('open', 'show');
         openCards[i].classList.add('match');
+        openCards[i].classList.add('same-icon');
     }
-    openCards.pop();
-    openCards.pop();
     matches++;
+    setTimeout(function() {
+        for (let j = 0; j < openCards.length; j++) {
+            openCards[j].classList.remove('same-icon');
+        }
+        openCards.pop();
+        openCards.pop();
+    }, 1000);
 }
 
 function removeAndHideCards() {
-    // Change the style of card to match
+    // Change the style of card to mismatch
     for (let i = 0; i < openCards.length; i++) {
+        openCards[i].style.background = 'orange';
+        openCards[i].classList.add('different-icon');
         // Remove previous style
-        openCards[i].classList.remove('open', 'show');
     }
-    openCards.pop();
-    openCards.pop();
+    setTimeout(function() {
+        for (let j = 0; j < openCards.length; j++) {
+            openCards[j].classList.remove('open', 'show', 'different-icon');
+            // Restore default background of the card
+            openCards[j].style.background = '';
+        }
+        openCards.pop();
+        openCards.pop();
+    }, 1000);
 }
 
 /*
