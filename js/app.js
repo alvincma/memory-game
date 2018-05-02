@@ -12,6 +12,7 @@ let cards = ['diamond', 'paper-plane-o', 'anchor', 'bolt',
 let openCards = [];
 let moves = 0;
 let matches = 0;
+let ratings = 3;
 
 /*
  * Display the cards on the page
@@ -53,6 +54,7 @@ function startNewGame() {
     openCards = [];
     moves = 0;
     matches = 0;
+    ratings = 3;
     document.querySelector('.moves').textContent = moves;
     const starList = document.querySelectorAll('.stars li i');
     for (let i = 0; i < starList.length; i++) {
@@ -135,6 +137,9 @@ function checkMatchCards() {
     } else {
         removeAndHideCards()
     }
+
+    // Change star ratings
+    changeStarRatings();
 }
 
 function lockCards() {
@@ -157,6 +162,36 @@ function removeAndHideCards() {
     }
     openCards.pop();
     openCards.pop();
+}
+
+/*
+ * Use simple algorithm to change the star ratings.
+ *
+ * 8 - 12 moves: 3 stars
+ * 13 - 20 moves: 2 stars
+ * 20 and above: 1 star
+ */
+function changeStarRatings() {
+    if (moves >= 13 && moves <= 20 && ratings === 3) {
+        // Reduce to 2 stars
+        ratings = 2;
+        displayStars(ratings);
+    } else if (moves >= 20 && ratings === 2) {
+        // Reduce to 1 star
+        ratings = 1;
+        displayStars(ratings);
+    }
+}
+
+function displayStars(ratings) {
+    const starList = document.querySelectorAll('.stars li i');
+    for (let i = 0; i < starList.length; i++) {
+        if (i >= ratings) {
+            if (starList[i].classList.contains('fa-star')) {
+                starList[i].classList.replace('fa-star', 'fa-star-o');
+            }
+        }
+    }
 }
 
 function checkWin() {
