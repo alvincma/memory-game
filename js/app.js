@@ -28,6 +28,10 @@ startNewGame();
 const restart = document.querySelector('.restart');
 restart.addEventListener('click', startNewGame);
 
+// Hook up play again button
+const play = document.querySelector('.play-button');
+play.addEventListener('click', playNewGame);
+
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -41,6 +45,17 @@ function shuffle(array) {
     }
 
     return array;
+}
+
+// PLay new game function
+// 1. Hide the winning screen
+// 2. Show game screen
+function playNewGame() {
+    const container = document.querySelector('.container');
+    const winningScreen = document.querySelector('.winning-screen');
+    container.style.display = 'flex';
+    winningScreen.style.display = 'none';
+    startNewGame();
 }
 
 // New game function:
@@ -210,10 +225,15 @@ function displayStars(ratings) {
 
 function checkWin() {
     if (matches === 8) {
-        setTimeout(displayCongrat, 500);
+        setTimeout(displayWinningScreen, 1000);
     }
 }
 
-function displayCongrat() {
-    alert('Congratulations! You\'ve won the game!');
+function displayWinningScreen() {
+    const container = document.querySelector('.container');
+    const winningScreen = document.querySelector('.winning-screen');
+    document.querySelector('#final-moves').textContent = moves;
+    document.querySelector('#final-stars').textContent = ratings;
+    container.style.display = 'none';
+    winningScreen.style.display = 'flex';
 }
